@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私という人間の解説書</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf7f2;--surface:#fff;--border:#e0d8cc;
+  --accent:#2d1b0e;--accent2:#8b4513;--accent3:#c8956c;
+  --text:#1a1208;--text-mid:#6b5a44;--text-dim:#b0a090;
+}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:0 0 6rem}
+
+.hero{background:var(--accent);color:#faf7f2;padding:3.5rem 1.5rem 2.8rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px)}
+.hero-eye{font-size:0.58rem;letter-spacing:0.4em;color:var(--accent3);margin-bottom:1rem;font-family:'Shippori Mincho',serif;position:relative}
+.hero h1{font-family:'Shippori Mincho',serif;font-size:clamp(1.4rem,5vw,2rem);font-weight:600;line-height:1.5;margin-bottom:0.8rem;position:relative}
+.hero-sub{font-size:0.7rem;color:rgba(250,247,242,0.5);line-height:2;font-weight:300;max-width:400px;margin:0 auto;position:relative}
+
+.step-nav{display:flex;justify-content:center;align-items:center;padding:1.1rem 1rem;background:var(--surface);border-bottom:1px solid var(--border);gap:0}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:80px}
+.step-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--text-dim);transition:all 0.3s;background:var(--bg)}
+.step.active .step-dot{border-color:var(--accent2);color:var(--accent2);background:rgba(139,69,19,0.08)}
+.step.done .step-dot{background:var(--accent2);border-color:var(--accent2);color:#faf7f2}
+.step-label{font-size:0.5rem;color:var(--text-dim);letter-spacing:0.04em;text-align:center;line-height:1.4}
+.step.active .step-label{color:var(--accent2)}
+.step-line{width:14px;height:1.5px;background:var(--border);margin-top:13px;flex-shrink:0}
+.step-line.done{background:var(--accent2)}
+
+.wrap{max-width:580px;margin:0 auto;padding:0 1.2rem}
+.prog-wrap{padding:1.2rem 0 0.3rem}
+.prog-meta{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text-dim);margin-bottom:0.4rem}
+.prog-bar{height:2px;background:var(--border)}
+.prog-fill{height:100%;background:var(--accent2);transition:width 0.4s ease;width:0%}
+.card{background:var(--surface);border:1px solid var(--border);margin:1rem 0;padding:1.8rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.qlabel{font-size:0.56rem;letter-spacing:0.25em;color:var(--accent3);margin-bottom:0.7rem;font-family:'Shippori Mincho',serif}
+.qtext{font-family:'Shippori Mincho',serif;font-size:clamp(0.9rem,2.6vw,1rem);font-weight:600;line-height:1.85;color:var(--text);margin-bottom:0.4rem}
+.qsub{font-size:0.72rem;color:var(--text-dim);line-height:1.7;margin-bottom:1.2rem;font-weight:300}
+.opts{display:flex;flex-direction:column;gap:0.45rem}
+.opt{background:none;border:1px solid var(--border);color:var(--text-mid);font-size:0.79rem;font-weight:300;padding:0.85rem 1rem;text-align:left;cursor:pointer;line-height:1.65;transition:all 0.15s;border-radius:2px;font-family:'Noto Sans JP',sans-serif;width:100%}
+.opt:hover{border-color:var(--accent2);color:var(--text);background:rgba(139,69,19,0.04)}
+.opt.sel{border-color:var(--accent);color:var(--accent);background:rgba(45,27,14,0.06);font-weight:400}
+.nav{display:flex;justify-content:space-between;margin-bottom:1.5rem}
+.nbtn{background:none;border:1px solid var(--border);color:var(--text-mid);font-size:0.68rem;letter-spacing:0.12em;padding:0.6rem 1.2rem;cursor:pointer;transition:all 0.15s;font-family:'Noto Sans JP',sans-serif}
+.nbtn:hover:not(:disabled){border-color:var(--accent2);color:var(--text)}
+.nbtn:disabled{opacity:0.2;cursor:default}
+.nbtn.pri{background:var(--accent);border-color:var(--accent);color:#faf7f2}
+.nbtn.pri:hover:not(:disabled){background:var(--accent2);border-color:var(--accent2)}
+
+.between{text-align:center;padding:2.5rem 1.5rem}
+.btw-num{font-size:0.56rem;letter-spacing:0.3em;color:var(--accent3);margin-bottom:0.8rem;font-family:'Shippori Mincho',serif}
+.btw-title{font-family:'Shippori Mincho',serif;font-size:1.15rem;font-weight:600;color:var(--text);margin-bottom:0.7rem}
+.btw-text{font-size:0.76rem;color:var(--text-mid);line-height:1.9;margin-bottom:1.3rem;font-weight:300}
+.btw-result{background:var(--accent);color:#faf7f2;padding:1.2rem 1.5rem;margin-bottom:1.3rem;text-align:left}
+.br-label{font-size:0.54rem;letter-spacing:0.25em;color:var(--accent3);margin-bottom:0.4rem;font-family:'Shippori Mincho',serif}
+.br-type{font-family:'Shippori Mincho',serif;font-size:1rem;font-weight:600;margin-bottom:0.4rem;line-height:1.4}
+.br-catch{font-size:0.71rem;color:rgba(250,247,242,0.62);font-weight:300;line-height:1.85}
+
+/* CARTE */
+.c-hero{background:var(--accent);color:#faf7f2;padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.c-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px)}
+.c-eye{font-size:0.55rem;letter-spacing:0.4em;color:var(--accent3);margin-bottom:0.8rem;font-family:'Shippori Mincho',serif;position:relative}
+.c-title{font-family:'Shippori Mincho',serif;font-size:clamp(1.3rem,5vw,1.9rem);font-weight:600;margin-bottom:0.7rem;position:relative;line-height:1.4}
+.c-sub{font-size:0.68rem;color:rgba(250,247,242,0.45);font-weight:300;line-height:2;max-width:380px;margin:0 auto;position:relative}
+.basis-bar{background:rgba(200,149,108,0.11);border-bottom:1px solid rgba(200,149,108,0.22);padding:0.8rem 1.5rem;text-align:center}
+.basis-text{font-size:0.62rem;color:var(--accent2);letter-spacing:0.05em;line-height:1.9;font-family:'Shippori Mincho',serif}
+
+.chapter{margin:2.2rem 0 0;padding:1rem 0 0.3rem;border-top:1px solid var(--border)}
+.ch-num{font-size:0.53rem;letter-spacing:0.35em;color:var(--accent3);font-family:'Shippori Mincho',serif;margin-bottom:0.3rem}
+.ch-title{font-family:'Shippori Mincho',serif;font-size:clamp(0.93rem,3vw,1.12rem);font-weight:600;color:var(--text);line-height:1.5}
+
+.meter-grid{display:flex;flex-direction:column;gap:0.9rem;margin:0.8rem 0}
+.meter-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.28rem}
+.meter-label{font-size:0.67rem;font-weight:400;color:var(--text)}
+.meter-sub{font-size:0.54rem;color:var(--text-dim)}
+.meter-track{height:3px;background:var(--border)}
+.meter-fill{height:100%;transition:width 1.2s ease;background:var(--accent2)}
+.meter-poles{display:flex;justify-content:space-between;font-size:0.52rem;color:var(--text-dim);margin-top:0.22rem}
+
+.sec{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:1.3rem 1.6rem;margin-bottom:0.7rem}
+.sec-label{font-size:0.52rem;letter-spacing:0.22em;color:var(--accent2);margin-bottom:0.55rem;font-family:'Shippori Mincho',serif}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.45rem;line-height:1.5}
+.sec-text{font-size:0.78rem;font-weight:300;color:var(--text-mid);line-height:1.95}
+.sec-text p{margin-bottom:0.6rem}
+.sec-text p:last-child{margin-bottom:0}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.7rem 0}
+.col-c{background:var(--surface);border:1px solid var(--border);padding:1.1rem}
+.col-label{font-size:0.52rem;letter-spacing:0.2em;color:var(--accent3);margin-bottom:0.4rem;font-family:'Shippori Mincho',serif}
+.col-text{font-size:0.71rem;font-weight:300;color:var(--text-mid);line-height:1.88}
+
+.warn{background:rgba(192,57,43,0.05);border:1px solid rgba(192,57,43,0.17);border-left:3px solid #c0392b;padding:1.1rem 1.5rem;margin-bottom:0.7rem}
+.warn-label{font-size:0.52rem;letter-spacing:0.2em;color:#8b2020;margin-bottom:0.4rem;font-family:'Shippori Mincho',serif}
+.warn-text{font-size:0.76rem;font-weight:300;color:#6b2020;line-height:1.92}
+
+.kurotxt{background:var(--accent);color:#faf7f2;padding:1.8rem 1.6rem;margin-bottom:0.7rem}
+.k-label{font-size:0.52rem;letter-spacing:0.3em;color:var(--accent3);margin-bottom:0.6rem;font-family:'Shippori Mincho',serif}
+.k-title{font-family:'Shippori Mincho',serif;font-size:clamp(0.9rem,3vw,1.05rem);font-weight:600;margin-bottom:0.7rem;line-height:1.5}
+.k-text{font-size:0.74rem;color:rgba(250,247,242,0.6);font-weight:300;line-height:2.05}
+.k-text p{margin-bottom:0.65rem}
+.k-text p:last-child{margin-bottom:0}
+
+.final{background:var(--accent);color:#faf7f2;padding:2.2rem 1.6rem;margin:1.2rem 0}
+.final-label{font-size:0.52rem;letter-spacing:0.35em;color:var(--accent3);margin-bottom:0.7rem;font-family:'Shippori Mincho',serif}
+.final-title{font-family:'Shippori Mincho',serif;font-size:clamp(1rem,3.2vw,1.22rem);font-weight:600;margin-bottom:0.85rem;line-height:1.5}
+.final-text{font-size:0.75rem;color:rgba(250,247,242,0.62);font-weight:300;line-height:2.05}
+.final-text p{margin-bottom:0.7rem}
+.final-text p:last-child{margin-bottom:0}
+
+.quote{border-left:2px solid var(--accent3);padding:0.7rem 1.1rem;margin:0.8rem 0;background:rgba(200,149,108,0.05)}
+.quote-text{font-family:'Shippori Mincho',serif;font-size:0.78rem;color:var(--text-mid);line-height:1.9}
+
+.restart-btn{display:block;width:100%;border:1px solid var(--border);background:none;color:var(--text-dim);font-size:0.63rem;letter-spacing:0.12em;padding:0.7rem;cursor:pointer;margin:1rem 0 3rem;font-family:'Noto Sans JP',sans-serif}
+.restart-btn:hover{border-color:var(--accent2);color:var(--text-mid)}
+
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="app-hero" class="hero">
+  <div class="hero-eye">SELF DIAGNOSIS</div>
+  <h1>私という人間の<br>解説書をつくる</h1>
+  <div class="hero-sub">4つの診断を経て、あなただけのカルテが生成される。<br>嫌いなもの、後悔と欲望、ときめき、設計の外側——<br>違う角度から照らして、同じ一人に辿り着く。</div>
+</div>
+
+<div id="step-nav" class="step-nav">
+  <div class="step active" id="snav0"><div class="step-dot">1</div><div class="step-label">嫌いなもの</div></div>
+  <div class="step-line" id="sl0"></div>
+  <div class="step" id="snav1"><div class="step-dot">2</div><div class="step-label">後悔と欲望</div></div>
+  <div class="step-line" id="sl1"></div>
+  <div class="step" id="snav2"><div class="step-dot">3</div><div class="step-label">ときめき</div></div>
+  <div class="step-line" id="sl2"></div>
+  <div class="step" id="snav3"><div class="step-dot">4</div><div class="step-label">設計の外側</div></div>
+  <div class="step-line" id="sl3"></div>
+  <div class="step" id="snav4"><div class="step-dot">✦</div><div class="step-label">カルテ生成</div></div>
+</div>
+
+<div id="quiz-area">
+  <div class="wrap">
+    <div class="prog-wrap">
+      <div class="prog-meta"><span id="pmeta"></span><span id="ppct"></span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pfill"></div></div>
+    </div>
+    <div class="card">
+      <div class="qlabel" id="qlabel"></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="qsub" id="qsub"></div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <div class="nav">
+      <button class="nbtn" id="bbk">← 戻る</button>
+      <button class="nbtn pri" id="bnx">次へ →</button>
+    </div>
+  </div>
+</div>
+
+<div id="between-area" style="display:none">
+  <div class="wrap">
+    <div class="between">
+      <div class="btw-num" id="btw-num"></div>
+      <div class="btw-title" id="btw-title"></div>
+      <div class="btw-text" id="btw-text"></div>
+      <div class="btw-result">
+        <div class="br-label">RESULT</div>
+        <div class="br-type" id="br-type"></div>
+        <div class="br-catch" id="br-catch"></div>
+      </div>
+      <button class="nbtn pri" id="bt-next" style="width:100%;text-align:center;padding:0.8rem"></button>
+    </div>
+  </div>
+</div>
+
+<div id="carte-area" style="display:none"></div>
+
+<script>
+(function(){
+
+// ===== D1: 嫌いなもの =====
+const D1={
+  questions:[
+    {t:"誰かが「専門家によると……」「法律では……」と言い出した",s:"その主張の中身は関係なく、この言い方そのものをみたとき",o:[
+      {t:"うわ、また始まった",ax:"struct",v:3},
+      {t:"内容次第かな",ax:"context",v:3},
+      {t:"それは大事",ax:"warmth",v:3},
+      {t:"特に何も感じない",ax:"distance",v:3},
+    ]},
+    {t:"調べずにAIの回答をそのまま貼り付けてくる人をみた",s:"SNSでもリアルでも、どんな場面でも",o:[
+      {t:"なんで自分で確かめないんだ",ax:"struct",v:3},
+      {t:"まあ効率的ではある",ax:"context",v:3},
+      {t:"便利なんだからいいじゃん",ax:"warmth",v:2},
+      {t:"他人のやり方だし",ax:"distance",v:3},
+    ]},
+    {t:"「私たちは間違ってない、声を上げよう」という投稿をみた",s:"自分が属してない界隈の話",o:[
+      {t:"誰のために言ってるんだろう",ax:"struct",v:3},
+      {t:"共感できるならいいと思う",ax:"context",v:2},
+      {t:"勇気ある行動だと思う",ax:"warmth",v:3},
+      {t:"どうでもいい",ax:"distance",v:3},
+    ]},
+    {t:"使っていたツールが「アップデートで仕様変更」と話題になっている",s:"自分も使っているツールだとして",o:[
+      {t:"またやってる、対応するか",ax:"struct",v:3},
+      {t:"慣れてたのに困る",ax:"context",v:2},
+      {t:"前の方が良かった",ax:"warmth",v:2},
+      {t:"みんなどう対応してるか気になる",ax:"distance",v:2},
+    ]},
+    {t:"「殴りあえる相手」と「いつでも肯定してくれる相手」、どちらが好きか",s:"人間でもAIでも",o:[
+      {t:"殴りあえる方が断然いい",ax:"struct",v:3},
+      {t:"場合による",ax:"context",v:3},
+      {t:"肯定してくれる方が楽",ax:"warmth",v:3},
+      {t:"あまり考えたことなかった",ax:"distance",v:2},
+    ]},
+    {t:"何かを「やめる」と決めたとき",s:"仕事でも趣味でも、人間関係でも",o:[
+      {t:"記録だけ残してさっさと次",ax:"struct",v:3},
+      {t:"しばらくは引きずる",ax:"context",v:2},
+      {t:"かなり長く尾を引く",ax:"warmth",v:2},
+      {t:"やめたつもりでもまた戻る",ax:"distance",v:2},
+    ]},
+    {t:"「設計」という言葉に、どんな印象を持つか",s:"何かを作るとき、関係性を構築するとき",o:[
+      {t:"当たり前にやること",ax:"struct",v:3},
+      {t:"できればやった方がいい",ax:"context",v:3},
+      {t:"自然に任せる方が好き",ax:"warmth",v:3},
+      {t:"あまり意識したことがない",ax:"distance",v:2},
+    ]},
+  ],
+  types:{
+    struct:{name:"構造感受型",catch:"思考の順番が逆になっているとき、内容以前に「もう聞けない」となる。それはあなたが何を知性と見なしているかの表れだ。"},
+    context:{name:"文脈判断型",catch:"状況によって正解が変わることを知っていて、それを柔軟さとして持っている。文脈を無視した断言に最も苛立つ。"},
+    warmth:{name:"関係温度型",catch:"正しさを武器にしてくる人が無理。内容より、どう言うかがあなたの価値観の核心にある。"},
+    distance:{name:"観察距離型",catch:"適切な距離を自然に保てる。無理と感じるのは、その距離を侵食してくるものだ。"},
+  },
+  calc(ans){
+    const sc={struct:0,context:0,warmth:0,distance:0};
+    this.questions.forEach((q,i)=>{if(ans[i]!==null)sc[q.o[ans[i]].ax]+=q.o[ans[i]].v;});
+    const top=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
+    return {scores:sc,typeKey:top,...this.types[top]};
+  }
+};
+
+// ===== D2: 後悔と欲望 =====
+const D2={
+  questions:[
+    {t:"後悔したとき、最初に浮かぶのはどちらか。",s:"",ax:[0,-1,2,0],d:1,o:[
+      {t:"あのとき自分がこうしていれば、という思い",v:2},
+      {t:"どちらかといえば自分に原因を求める",v:1},
+      {t:"どちらかといえば状況や相手のせいにしたくなる",v:-1},
+      {t:"あの人さえいなければ、という気持ちが先に来る",v:-2},
+    ]},
+    {t:"欲しいものがあるとき、どう動くか。",s:"",ax:[1,1,0,0],d:1,o:[
+      {t:"欲しいと思ったら、ほぼ手を伸ばす",v:2},
+      {t:"少し迷うが、大抵は動く",v:1},
+      {t:"欲しいと思っても、しばらく様子を見る",v:-1},
+      {t:"欲しいという気持ちをそのまま出すのが苦手",v:-2},
+    ]},
+    {t:"「あのとき言えばよかった」と後悔することはあるか。",s:"",ax:[2,2,0,0],d:-1,o:[
+      {t:"よくある。言いたいことを飲み込むことが多い",v:2},
+      {t:"ときどきある",v:1},
+      {t:"あまりない。言いたいことは大体言う",v:-1},
+      {t:"ほとんどない。言うか言わないか迷わない",v:-2},
+    ]},
+    {t:"自分の欲望に対して、どんな感覚を持っているか。",s:"",ax:[3,3,0,0],d:1,o:[
+      {t:"自分が何を求めているか、わりとはっきりわかる",v:2},
+      {t:"大体はわかる",v:1},
+      {t:"なんとなくはわかるが、言葉にしにくい",v:-1},
+      {t:"自分でもよくわからないことが多い",v:-2},
+    ]},
+    {t:"嫌なことがあったとき、どう処理するか。",s:"",ax:[0,0,0,0],d:-1,o:[
+      {t:"相手や状況への不満として消化する",v:2},
+      {t:"どちらかといえば外に向かう",v:1},
+      {t:"自分の何かが悪かったと考える",v:-1},
+      {t:"結局自分を責めて終わることが多い",v:-2},
+    ]},
+    {t:"「もっとこうすればよかった」という後悔が続くとき、どうなるか。",s:"",ax:[2,2,0,0],d:1,o:[
+      {t:"しばらく引きずるが、ある時点で切り替える",v:2},
+      {t:"気になりつつも日常に戻れる",v:1},
+      {t:"なかなか切り替えられない",v:-1},
+      {t:"同じことをぐるぐる考え続けてしまう",v:-2},
+    ]},
+    {t:"誰かに「それは違う」と思ったとき、どうするか。",s:"",ax:[1,1,0,0],d:1,o:[
+      {t:"はっきり言う。言わないと気持ちが悪い",v:2},
+      {t:"状況にもよるが、大体は伝える",v:1},
+      {t:"言いたいが、関係が壊れそうで飲み込む",v:-1},
+      {t:"波風を立てたくないので黙っていることが多い",v:-2},
+    ]},
+  ],
+  calcType(sc){
+    const s=sc.map(v=>Math.max(-1,Math.min(1,v/3)));
+    if(s[0]>0.1&&s[1]<0)return"jiseki";
+    if(s[0]<0&&s[1]>0.1)return"yokubou";
+    if(s[2]<-0.1&&s[0]>0)return"sakiokuri";
+    if(s[3]<-0.1&&s[1]<0)return"kiri";
+    if(s[3]>0.1&&s[2]>0.1)return"genjitsu";
+    return"process";
+  },
+  types:{
+    jiseki:{name:"静かに煮える自責マシン",catch:"全部自分のせいにして、欲望は飲み込む。優しいんじゃなくて、爆発が怖いだけ。"},
+    yokubou:{name:"欲望に正直すぎる即決人間",catch:"欲しいものには手を伸ばす。後悔は人のせい。それで何度やらかしてきた？"},
+    sakiokuri:{name:"先送り職人・後悔コレクター",catch:"言えなかった、動けなかった、また後悔した。そのコレクション、いつまで増やすつもり？"},
+    kiri:{name:"欲望不明の霧の中の人",catch:"何が欲しいのかわからない、出し方もわからない。かなり長いこと自分を後回しにしてきた人の気配がする。"},
+    genjitsu:{name:"自分をわかってる現実主義者",catch:"自分の欲望も後悔のパターンも把握している。あとはそれをどう使うか、だけ。"},
+    process:{name:"感情処理中・しばらくお待ちください",catch:"後悔の方向も欲望の出し方も、今ちょうど変化の途中にいる。"},
+  },
+  calc(ans){
+    const sc=[0,0,0,0];
+    this.questions.forEach((q,i)=>{
+      if(ans[i]===null)return;
+      const v=q.o[ans[i]].v*q.d;
+      q.ax.forEach((a,j)=>{if(j===ans[i])sc[a]+=v;});
+    });
+    const k=this.calcType(sc);
+    return{scores:sc,typeKey:k,...this.types[k]};
+  }
+};
+
+// ===== D3: ときめき =====
+const D3={
+  questions:[
+    {t:"道を歩いていて、思わず立ち止まることがあるとしたら？",s:"",o:[
+      {t:"光の角度や影の形が、一瞬だけ完璧になった",ax:"bi",v:3},
+      {t:"知らない路地に、知らない店を見つけた",ax:"guzen",v:3},
+      {t:"すれ違いざまに、誰かの言葉の断片が耳に入った",ax:"hito",v:3},
+      {t:"建物の構造や素材が、よくできていると気づいた",ax:"waza",v:3},
+    ]},
+    {t:"本や映画で、心が動く瞬間はどこか。",s:"",o:[
+      {t:"伏線が回収される瞬間",ax:"monogatari",v:3},
+      {t:"台詞じゃなくて、沈黙や表情",ax:"hito",v:3},
+      {t:"設定の精巧さや、世界観の一貫性",ax:"monogatari",v:2},
+      {t:"知らなかった事実や概念に出会う場面",ax:"chi",v:3},
+    ]},
+    {t:"誰かに「すごい」と思う瞬間はどんなとき？",s:"",o:[
+      {t:"ひとつのことを、信じられないほど深く知っている",ax:"chi",v:3},
+      {t:"無駄がない。動き方や言葉の選び方が洗練されている",ax:"waza",v:3},
+      {t:"その人がそこにいるだけで、場の空気が変わる",ax:"hito",v:3},
+      {t:"自分だったら怖くて踏み出せないことを、やっている",ax:"guzen",v:3},
+    ]},
+    {t:"音楽が刺さる瞬間はどれに近いか。",s:"",o:[
+      {t:"音の構造や和音の動きに気づいたとき",ax:"chi",v:2},
+      {t:"歌詞の一行が、今の自分に直撃したとき",ax:"hito",v:3},
+      {t:"音の質感や空間の広がりが、体に響くとき",ax:"bi",v:3},
+      {t:"演奏者の技術が、はっきりわかるとき",ax:"waza",v:3},
+    ]},
+    {t:"旅先や初めての場所で、ときめく瞬間は？",s:"",o:[
+      {t:"地図に載っていない路地や、偶然入った店",ax:"guzen",v:3},
+      {t:"その土地の歴史や背景を知って、景色の見え方が変わる",ax:"chi",v:3},
+      {t:"現地の人との、短くても印象に残る会話",ax:"hito",v:3},
+      {t:"建築や街の設計の美しさに気づく",ax:"waza",v:3},
+    ]},
+    {t:"何かを作っている人を見て、心が動く場面は？",s:"",o:[
+      {t:"素材や道具の選び方に、哲学がある",ax:"waza",v:3},
+      {t:"完成品より、制作過程の試行錯誤",ax:"chi",v:2},
+      {t:"作ったものより、なぜ作ったかという理由",ax:"hito",v:2},
+      {t:"偶然生まれた、予定外の形や色",ax:"guzen",v:3},
+    ]},
+    {t:"日常のどんな瞬間に、ふと「ああ、いいな」と思うか。",s:"",o:[
+      {t:"朝の光の入り方や、夕暮れの色",ax:"bi",v:3},
+      {t:"読んでいた本の一文が、今日のことと重なる",ax:"monogatari",v:3},
+      {t:"誰かが、自分のことを正確に言い当てた",ax:"hito",v:3},
+      {t:"やろうと思っていたことが、偶然全部うまくいく",ax:"guzen",v:3},
+    ]},
+    {t:"知的なときめきが来るとしたら、どんな場面か。",s:"",o:[
+      {t:"まったく関係ないと思っていた二つのことが、繋がる",ax:"chi",v:3},
+      {t:"ずっと言語化できなかったことを、誰かが言葉にしてくれた",ax:"hito",v:3},
+      {t:"複雑な仕組みを、一気に理解する瞬間",ax:"chi",v:2},
+      {t:"自分の常識が、静かにひっくり返される",ax:"guzen",v:2},
+    ]},
+    {t:"フィクションで、最もときめく要素はどれか。",s:"",o:[
+      {t:"キャラクターが、自分の信念を貫く瞬間",ax:"monogatari",v:3},
+      {t:"世界観や設定の、細部まで作り込まれた精度",ax:"monogatari",v:2},
+      {t:"台詞ではなく、行間や余白",ax:"bi",v:3},
+      {t:"予測できない展開より、必然に見える展開",ax:"waza",v:2},
+    ]},
+    {t:"ときめいたあと、自分はどうなるか。",s:"",o:[
+      {t:"もっと知りたくなる。調べたり、深めたりする",ax:"chi",v:2},
+      {t:"誰かに話したくなる。伝えたくなる",ax:"hito",v:2},
+      {t:"しばらくそのままでいたい。余韻に浸る",ax:"bi",v:2},
+      {t:"自分でも何か作りたくなる",ax:"waza",v:2},
+    ]},
+  ],
+  axLabels:{bi:"美・形式",chi:"知・発見",hito:"人・言葉",guzen:"瞬間・偶然",monogatari:"物語・虚構",waza:"技・仕事"},
+  typeTexts:{
+    "bi_waza":{name:"美と技の目撃者",catch:"世界の精度に気づく人。光の角度も職人の手の動きも、あなたには同じ言語で見えている。"},
+    "chi_guzen":{name:"発見と偶然の収集家",catch:"知らなかったことを知る瞬間と、予期しない出来事。それがあなたのエネルギー源。"},
+    "hito_monogatari":{name:"言葉と物語の解読者",catch:"誰かの一言、フィクションの伏線回収。あなたは「意味が通る」瞬間にときめく。"},
+    "bi_hito":{name:"気配と余白の感受者",catch:"言葉より前に、雰囲気と空気が来る。あなたは世界の質感で生きている。"},
+    "chi_waza":{name:"構造と精度の探求者",catch:"なぜそうなっているのか。どう作られているのか。仕組みに美しさを見る人。"},
+    "guzen_monogatari":{name:"偶然と物語の待ち人",catch:"計画していなかった出来事と伏線回収。あなたは人生をフィクションとして読んでいる。"},
+    "bi_chi":{name:"美と知が交差する人",catch:"美しいものの構造を知りたい。知ったことが美しく見える。その両方があなたのときめき。"},
+    "hito_waza":{name:"人の仕事と言葉に宿るものを見る人",catch:"誰かが丁寧に積み上げてきたものに、心が動く。技術でも言葉でも、その人の時間が見えるとき。"},
+    "bi_guzen":{name:"光と偶然の狩人",catch:"一瞬だけ完璧になる場面を探している。計画されていない美しさが、あなたのエネルギー源だ。"},
+    "bi_monogatari":{name:"余白と物語の読み手",catch:"美しい形式と、そこに宿る物語。設定の精巧さに美しさを見る。"},
+    "chi_hito":{name:"言葉と構造の解読者",catch:"誰かの言葉の精度に反応する。その言葉がなぜそう機能するかを知りたくなる。"},
+    "chi_monogatari":{name:"構造と伏線の解析者",catch:"なぜその物語が成立しているかを分解したくなる。知ることで物語が深く見える。"},
+    "guzen_hito":{name:"偶然と気配の受信者",catch:"予期しない出来事と、人の気配。どちらも計画できないものがときめきの源だ。"},
+    "guzen_waza":{name:"偶然と技の目撃者",catch:"予定外の出来事と、誰かの洗練された動き。「こうなるとは思わなかった」という瞬間に宿るときめき。"},
+    "monogatari_waza":{name:"物語と技が重なる場を見る人",catch:"精巧に作られた世界と、そこに宿る技術。フィクションの完成度に反応する。"},
+  },
+  calc(ans){
+    const sc={bi:0,chi:0,hito:0,guzen:0,monogatari:0,waza:0};
+    this.questions.forEach((q,i)=>{if(ans[i]!==null){const o=q.o[ans[i]];sc[o.ax]+=o.v;}});
+    const max=Math.max(...Object.values(sc))||1;
+    const norm={};Object.entries(sc).forEach(([k,v])=>{norm[k]=Math.round(v/max*100);});
+    const sorted=Object.entries(norm).sort((a,b)=>b[1]-a[1]);
+    const key=[sorted[0][0],sorted[1][0]].sort().join("_");
+    const type=this.typeTexts[key]||{name:"あらゆる場所でときめける人",catch:"特定の種類に偏らず、世界のいたるところに心が動く。"};
+    return{scores:norm,typeKey:key,...type};
+  }
+};
+
+// ===== D4: 設計の外側 =====
+const D4={
+  questions:[
+    {t:"どうにもならないことが起きたとき、最初に動く衝動はどれに近いか。",s:"病、喪失、事故——自分の手が届かない出来事として",o:[
+      {t:"できることを探し始める。何か一つでも動かせるものがないか",ax:"sekkei",v:3},
+      {t:"なぜこうなったかを考え始める。原因や文脈を追いたくなる",ax:"imi",v:3},
+      {t:"しばらく何もできない。ただそこにいるしかない",ax:"tai",v:3},
+      {t:"感情が先に来る。分析より先に、体が反応する",ax:"karada",v:3},
+    ]},
+    {t:"大切な人が病気になったとき、自分はどこにいるか。",s:"具体的な場面として想像してみて",o:[
+      {t:"できることリストを作っている。調べる、手配する、準備する",ax:"sekkei",v:3},
+      {t:"その人のそばにいる。何もしなくていいから、いる",ax:"sonzai",v:3},
+      {t:"自分が何をすべきか判断できなくて、立ち尽くしている",ax:"tai",v:3},
+      {t:"自分の感情を後回しにして、まず機能しようとする",ax:"sekkei",v:2},
+    ]},
+    {t:"関係が壊れていくのを感じたとき、どうするか。",s:"修復できない予感がある場面",o:[
+      {t:"まだ間に合うかどうかを見極めようとする",ax:"sekkei",v:3},
+      {t:"壊れていく過程をそのまま見ている。止めようとしない自分がいる",ax:"tai",v:3},
+      {t:"なぜこうなったかを言語化しようとする",ax:"imi",v:3},
+      {t:"相手のことより、自分が何を失うかを先に感じる",ax:"karada",v:2},
+    ]},
+    {t:"意味を見つけられない出来事に直面したとき、どうなるか。",s:"なぜこうなったか、理由が見えない場面",o:[
+      {t:"意味がないという事実をそのまま受け取ろうとする",ax:"tai",v:3},
+      {t:"どこかに意味があるはずだと探し続ける",ax:"imi",v:3},
+      {t:"意味より先に、次に何ができるかに移行する",ax:"sekkei",v:2},
+      {t:"意味を問うこと自体が苦しくなる",ax:"karada",v:3},
+    ]},
+    {t:"何かを失った後、自分はどのくらいで「次」に向かうか。",s:"物でも人でも関係でも",o:[
+      {t:"記録だけ残して、わりと早く次に行く",ax:"sekkei",v:3},
+      {t:"時間がかかる。でも必ず戻ってこれると知っている",ax:"tai",v:2},
+      {t:"「次」に向かうより、失ったものと一緒にいたい時間がある",ax:"sonzai",v:3},
+      {t:"次に向かえているかどうか、自分でもよくわからない",ax:"karada",v:2},
+    ]},
+    {t:"自分ではどうにもならない場面で、「待つ」ことができるか。",s:"結果が出るまでの時間……",o:[
+      {t:"待ちながら、できることを探している。完全には待てない",ax:"sekkei",v:3},
+      {t:"待てる。待つことも一つの動き方だと思っている",ax:"tai",v:3},
+      {t:"待つ時間に、何かを作ったり書いたりして過ごす",ax:"imi",v:2},
+      {t:"待つのが苦手。不確かさの中にいると消耗する",ax:"karada",v:3},
+    ]},
+    {t:"自分の体が思い通りにならないとき、どう受け取るか。",s:"疲弊、病気、限界……",o:[
+      {t:"信号として受け取る。何かを変えるタイミングだと判断する",ax:"imi",v:3},
+      {t:"まず原因を探す。なぜこうなったかを調べたくなる",ax:"sekkei",v:2},
+      {t:"ただそうなのだと受け入れる。抗わない",ax:"tai",v:3},
+      {t:"体が裏切った感覚がある。コントロールできない怒りや悲しみが来る",ax:"karada",v:3},
+    ]},
+    {t:"誰かが死んだとき（近しい人を想定して）、自分はどこにいるか。",s:"正直に",o:[
+      {t:"葬儀や手続きを動かしている。機能することで自分を保っている",ax:"sekkei",v:3},
+      {t:"その人がいたという事実の重さの中にいる",ax:"sonzai",v:3},
+      {t:"その人との時間の意味を考えている",ax:"imi",v:3},
+      {t:"自分がどう感じているか、よくわからなくなっている",ax:"karada",v:3},
+    ]},
+    {t:"「設計が間に合わなかった」という感覚を、あなたは何と呼んでいるか。",s:"言葉にしにくくてもいい",o:[
+      {t:"失敗。次に活かせる情報として処理しようとする",ax:"sekkei",v:3},
+      {t:"運、あるいは縁。自分の外側にあるものとして受け取る",ax:"tai",v:3},
+      {t:"宿題。いつか意味がわかる問いとして持ち続ける",ax:"imi",v:3},
+      {t:"傷。言語化できないが、体のどこかに残っている",ax:"karada",v:3},
+    ]},
+  ],
+  types:{
+    sekkei:{name:"設計の外側でも、動く手を探す人",catch:"どうにもならない場面でも、一つでも動かせるものを探し始める。それは強さであり、同時に「立ち止まれない」という構造でもある。",
+      ktitle:"「機能することと、感じることは別の動詞だ」",
+      ktext:"あなたは設計の外側でも、設計しようとする。それが今まで機能してきた。ただ、機能し終わったあと、誰もいない場所で、あなたはどこにいるか。"},
+    imi:{name:"意味を見つけるまで、手放さない人",catch:"起きたことを言語化しようとする。意味が見つかるまで持ち続ける。それがあなたの、喪失への向き合い方だ。",
+      ktitle:"「意味は、探さなければ来ないものではない」",
+      ktext:"あなたは意味を探し続ける。それがあなたの道具になっている。ただ、意味が先に来ることがある。静かに、ずっと後から。手放すことと忘れることは別だ。"},
+    tai:{name:"ただそこにいることを選べる人",catch:"抗わない。設計し直そうとしない。そこにいる——それがあなたの、設計の外側での動き方だ。",
+      ktitle:"「在ることは、動かないことではない」",
+      ktext:"あなたは待てる。ただいることと、目を閉じていることは違う。あなたが今どちらにいるか——それは外からは見えない。"},
+    sonzai:{name:"そばにいることを選ぶ人",catch:"何もしなくていい、ただそこにいる。その選択ができる人は多くない。",
+      ktitle:"「何もしないことは、何もしていないことではない」",
+      ktext:"あなたが誰かのそばにいることを選ぶとき。ただ一つだけ問いたい。誰かのそばにいるとき、あなた自身のそばには誰がいるか。"},
+    karada:{name:"言語より先に、体が受け取る人",catch:"感情や体の反応が、分析より先に来る。それを「弱さ」と思っているなら、違う。それがあなたの、設計の外側への入口だ。",
+      ktitle:"「わからないことを、わかろうとしなくていい」",
+      ktext:"体が先に知っている。それがあなたの受け取り方だ。ただ、体が受け取ったものを、すぐ言葉にしようとしていないか。感じたことを、理解に変えなければ本物ではないと思っていないか。受け取ったまま、置いておくことができるか——それが問いだ。"},
+  },
+  calc(ans){
+    const sc={sekkei:0,imi:0,tai:0,sonzai:0,karada:0};
+    this.questions.forEach((q,i)=>{if(ans[i]!==null)sc[q.o[ans[i]].ax]+=q.o[ans[i]].v;});
+    const top=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
+    const max=Math.max(...Object.values(sc))||1;
+    const norm={};Object.entries(sc).forEach(([k,v])=>{norm[k]=Math.round(v/max*100);});
+    return{scores:norm,typeKey:top,...this.types[top]};
+  }
+};
+
+// ===== STATE =====
+const phases=[
+  {d:D1,label:"診断 1 / 4",btw:{num:"DIAGNOSIS 01 COMPLETE",title:"価値観の輪郭が見えた",text:"嫌いなものから、あなたが何を大切にしているかが浮かび上がった。次は、後悔と欲望の処理パターンを探る。",next:"次の診断へ →"}},
+  {d:D2,label:"診断 2 / 4",btw:{num:"DIAGNOSIS 02 COMPLETE",title:"感情の処理回路が見えた",text:"後悔と欲望の動き方が明らかになった。次は、あなたのエネルギーの源泉を探る。",next:"次の診断へ →"}},
+  {d:D3,label:"診断 3 / 4",btw:{num:"DIAGNOSIS 03 COMPLETE",title:"ときめきの地図が見えた",text:"どこで心が動くかがわかった。最後は、設計の外側——意思が及ばない場面でのあなたを探る。",next:"最後の診断へ →"}},
+  {d:D4,label:"診断 4 / 4",btw:null},
+];
+
+let phase=0,cur=0;
+const allAns=[
+  new Array(D1.questions.length).fill(null),
+  new Array(D2.questions.length).fill(null),
+  new Array(D3.questions.length).fill(null),
+  new Array(D4.questions.length).fill(null),
+];
+const results=[null,null,null,null];
+
+function currentD(){return phases[phase].d;}
+function currentAns(){return allAns[phase];}
+
+function updateStepNav(){
+  [0,1,2,3,4].forEach(i=>{
+    const el=document.getElementById('snav'+i);
+    if(!el)return;
+    el.className='step'+(i===phase?' active':i<phase?' done':'');
+  });
+  [0,1,2,3].forEach(i=>{
+    const el=document.getElementById('sl'+i);
+    if(!el)return;
+    el.className='step-line'+(i<phase?' done':'');
+  });
+}
+
+function renderQuiz(){
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('between-area').style.display='none';
+  document.getElementById('carte-area').style.display='none';
+  const d=currentD();
+  const ans=currentAns();
+  const q=d.questions[cur];
+  document.getElementById('qlabel').textContent=phases[phase].label+' — Q'+String(cur+1).padStart(2,'0');
+  document.getElementById('qtext').textContent=q.t;
+  const sub=document.getElementById('qsub');
+  sub.textContent=q.s||'';
+  sub.style.display=q.s?'block':'none';
+  const opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'+(ans[cur]===i?' sel':'');
+    b.textContent=o.t;b.type='button';
+    b.addEventListener('click',()=>{
+      currentAns()[cur]=i;
+      document.querySelectorAll('.opt').forEach((el,idx)=>el.classList.toggle('sel',idx===i));
+      document.getElementById('bnx').disabled=false;
+    });
+    opts.appendChild(b);
+  });
+  const pct=Math.round(cur/d.questions.length*100);
+  document.getElementById('pmeta').textContent='Q '+(cur+1)+' / '+d.questions.length;
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('bbk').disabled=cur===0;
+  document.getElementById('bnx').disabled=ans[cur]===null;
+  document.getElementById('bnx').textContent=cur===d.questions.length-1?'結果へ →':'次へ →';
+  updateStepNav();
+}
+
+function showBetween(){
+  const btw=phases[phase].btw;
+  const r=results[phase];
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('between-area').style.display='block';
+  document.getElementById('btw-num').textContent=btw.num;
+  document.getElementById('btw-title').textContent=btw.title;
+  document.getElementById('btw-text').textContent=btw.text;
+  document.getElementById('br-type').textContent=r.name;
+  document.getElementById('br-catch').textContent=r.catch;
+  const btn=document.getElementById('bt-next');
+  btn.textContent=btw.next;
+  btn.onclick=()=>{phase++;cur=0;renderQuiz();};
+  updateStepNav();
+}
+
+function generateCarte(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('between-area').style.display='none';
+  document.getElementById('app-hero').style.display='none';
+  document.getElementById('step-nav').style.display='none';
+  const r1=results[0],r2=results[1],r3=results[2],r4=results[3];
+  const html=buildCarte(r1,r2,r3,r4);
+  const el=document.getElementById('carte-area');
+  el.style.display='block';
+  el.innerHTML=html;
+  setTimeout(()=>{document.querySelectorAll('.meter-fill[data-w]').forEach(el=>{el.style.width=el.dataset.w+'%';});},200);
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('carte-restart').addEventListener('click',restart);
+}
+
+function buildCarte(r1,r2,r3,r4){
+  // 対人テキスト
+  const taijin_good={
+    struct:"自分で調べて、自分で決める人。根拠を持って反論できる人。「それは違う」と言ってくれる相手。沈黙が苦にならない人。",
+    context:"文脈を読んで動く人。「状況次第」という答えを持てる人。断言しすぎない相手。",
+    warmth:"温度を大切にする人。「どう言うか」を意識している相手。言葉を雑に扱わない人。",
+    distance:"適切な距離を自然に保てる人。観察を共有できる相手。",
+  }[r1.typeKey]||"思考の方向が合う人。";
+
+  const taijin_bad={
+    struct:"感情や結論が先にあって、権威を後から持ってくる人。思考の順番が逆だと察知した瞬間に聞けなくなる。",
+    context:"文脈を無視して断言する人。「みんなそうだから」で終わらせる人。",
+    warmth:"正しさを武器にしてくる人。攻撃性がある使い方をする人。",
+    distance:"距離を侵食してくるもの。感情の渦に引き込もうとする場。",
+  }[r1.typeKey]||"思考の順番が逆の人。";
+
+  // 後悔・感情テキスト
+  const kanjo={
+    genjitsu:"感情が動いた瞬間に分析が同時に始まる。怒りも悲しみも情報として処理される。爆発はほぼ起きない。代わりに「もう聞けない」という静かな遮断として出てくる。",
+    jiseki:"怒りは外に出す前に内側で畳まれる。自分に原因を求めるスピードが速く、静かな消耗として出てくる。",
+    yokubou:"感情は外に出やすい。欲しいものに対してはっきりしている。",
+    sakiokuri:"「言えなかった」系の後悔が溜まりやすい。感情は内側にあるが出すタイミングを逃し続ける。",
+    kiri:"欲望が霧の中にある。自分が何を感じているかより「どう見られるか」が先に来る。",
+    process:"感情のパターンが一定していない。今ちょうど変化の途中にいる。",
+  }[r2.typeKey]||"感情を内側で処理してから動く。";
+
+  // ときめきテキスト
+  const toki={
+    "bi_waza":"世界の精度に反応する。光の角度も職人の仕事も「よくできている」という感覚が同じ回路で来る。",
+    "chi_guzen":"知らなかったことを知る瞬間と予期しない出来事にエネルギーが宿る。",
+    "hito_monogatari":"人の言葉と物語の構造に反応する。台詞より沈黙、表面より行間。",
+    "bi_hito":"質感と気配に反応する。言語化する前の感覚が先に動く。",
+    "chi_waza":"仕組みの美しさに反応する。なぜそうなっているかの理由が見えたとき、美しさとして感じる。",
+    "guzen_monogatari":"偶然と必然の重なりに反応する。日常の出来事を布石として見る。",
+    "bi_chi":"美と理解が重なる瞬間に反応する。なぜ美しいのかがわかったとき、知識が解像度を上げるレンズになる。",
+    "hito_waza":"人の仕事と言葉に宿る時間に反応する。丁寧に積み上げられたものに心が動く。",
+    "bi_guzen":"予期しない瞬間に美しさを見つける。計画されていない光の角度、偶然の重なり——そういう場面にエネルギーが宿る。",
+    "bi_monogatari":"美しい形式と、そこに込められた物語が重なるときに反応する。設定の精巧さが、世界観の美しさとして感じられる。",
+    "chi_hito":"誰かの言葉の精度に反応する。言い切る強さ、選ばれた一語——その背後にある思考を知りたくなる。",
+    "chi_monogatari":"なぜその物語が成立しているかを分解したくなる。知ることで物語がより深く見える——理解がレンズになっている。",
+    "guzen_hito":"計画されていない出来事と、人の気配に反応する。どちらも意図されていないものがときめきの入口になる。",
+    "guzen_waza":"予定外の展開と、誰かの洗練された技術に反応する。「こうなるとは思わなかった」という瞬間と「これはすごい」という瞬間が、同じ回路で来る。",
+    "monogatari_waza":"精巧に作られた世界と、そこに宿る技術に反応する。フィクションの完成度と職人の仕事が、同じときめきの言語で見える。",
+  }[r3.typeKey]||"特定の一つに偏らず、美しさも知識も人の気配も、それぞれがときめきの源になる。感受性の幅が広いということは、世界のあちこちに扉がある、ということだ。";
+
+  // 設計の外側テキスト
+  const sotogawa={
+    sekkei:{body:"どうにもならない場面でも、できることリストが始まる。機能することで自分を保っている。ただ、機能し続けることが「感じること」を後回しにしていることがある。",kaifuku:"小さく動かせるものを一つ見つけることから始める。それと並行して、機能するのをやめて「ただいる」時間を意識的に作ること。"},
+    imi:{body:"起きたことに意味を見つけようとする。言語化が喪失の処理方法になっている。意味が見つからないとき、言語化の道具が役に立たないと感じる場面が来ることがある。",kaifuku:"意味を探すのをやめて、ただそこにいることを許可する時間が必要になることがある。創作が喪失の器になることがある。"},
+    tai:{body:"抗わずにそこにいることができる。これは諦めではなく一つの選択だ。「ただいる」と「止まっている」は見た目が似ている。自分がどちらにいるかを時々確認する。",kaifuku:"動き出すタイミングを自分で決めることから始まる。言葉が現実で届いた瞬間に、自分が戻ったことを知る。"},
+    sonzai:{body:"何もしなくていい、そばにいることを選べる。これは設計の放棄ではなく、設計の中に「存在する」という選択肢を持っているということだ。",kaifuku:"誰かのそばにいることから始まることがある。あるいは誰かがそばにいてくれることで始まる。"},
+    karada:{body:"言語化より先に体と感情が動く。頭で理解する前に、体が先に受け取っている——これは弱さではなく、あなた固有の受け取り方だ。ただ、体が受け取ったものを言葉にしようと急ぎすぎると、感じたことが変形することがある。",kaifuku:"体の感覚から回復が始まる。言語化できた瞬間ではなく、体が少し軽くなった瞬間から。"},
+  }[r4.typeKey]||{body:"設計の外側でも自分なりの動き方がある。",kaifuku:"自分のペースで回復する。"};
+
+  const sec3_shomo={
+    genjitsu:"構造のない感情の渦。承認を求めて繰り返される同じ話。感情を処理する役割を期待されるとき。",
+    jiseki:"自分を責めることを強いられる場面。理不尽な批判。自責の矢印が止まらない時間。",
+    yokubou:"欲しいものを我慢させられる状況。感情を飲み込むことを求められる場面。正直さを否定されるとき。",
+    sakiokuri:"言いたいことがあるのに言えない空気。またタイミングを逃したという感覚が続くとき。",
+    kiri:"自分が何を求めているか聞かれる場面。欲望を言語化するよう促されるとき。内側が霧のままであることを責められる感覚。",
+    process:"変化の途中で安定を求められるとき。答えが出ていないのに結論を急かされる場面。",
+  }[r2.typeKey]||"感情の処理を強いられる場面。自分のペースを乱されるとき。";
+
+  const sec3_kaifuku={
+    genjitsu:"一人で完結する作業。設計と発見がある時間。「またやっとる」で終われる軽さのある関係。",
+    jiseki:"自分を責めなくていい時間。「それでいい」と受け止めてもらえる関係。静かに一人でいられる場所。",
+    yokubou:"欲しいものに正直でいられる時間。感情を出しても受け止めてもらえる関係。動き続けられる環境。",
+    sakiokuri:"言えなかったことを言える場面。言葉が届いたと感じる瞬間。後悔を記録して次に向かえるとき。",
+    kiri:"何も求められない時間。ただそこにいていい空間。自分のペースで内側を探れる静けさ。",
+    process:"変化を責められない時間。答えが出なくてもいい関係。今のままでいることを許される場面。",
+  }[r2.typeKey]||"一人で完結できる時間。自分のペースで動ける環境。";
+
+  const sec3_hihai={
+    genjitsu:"感情を情報として処理するため、自分の疲れに気づくのが遅れやすい。分析が先に走り、体の限界まで気づかないことがある。定期的に体感で確認すること。",
+    jiseki:"自分を責める声が、疲れのサインより先に来る。疲れているのか責めているのか区別しにくくなることがある。",
+    yokubou:"エネルギーが外に向かいやすいぶん、内側が空になっていることに気づきにくい。動き続けているうちに、気づいたら底をついていることがある。",
+    sakiokuri:"言えなかったことが溜まって、あるとき一気に重くなる。そのタイミングが予測できない。疲れとして出る前に、言葉として出す習慣を持つこと。",
+    kiri:"欲望が霧の中にあるため、何が自分を消耗させているかも見えにくい。疲れの正体がわからないまま疲れ続けることがある。",
+    process:"変化の途中にいるため、今の感情が疲れなのか変化なのか区別しにくい。消耗のサインを言語化しておくことが助けになる。",
+  }[r2.typeKey]||"自分の疲れに気づくのが遅れやすい。定期的に体感で確認すること。";
+
+  const sec1_shomo_sign={
+    struct:"【黄】相手を分析している自分に気づく。会話に半分しかいない。【橙】「またか」という疲労感。パターンへの苛立ち。【赤】「もう聞けない」という静かな遮断——感情での修復は無効。物理的な距離か、関係の設計を変えるしかない。",
+    warmth:"【黄】相手が傷ついていないか、言葉の温度が変わっていないかが気になり始める。【橙】自分の言葉を選びすぎて、言いたいことが届かない感覚。【赤】「もうこの人には届かない」という静かな諦め——温度が戻らないと感じたとき、内側から距離を置き始める。",
+    context:"【黄】状況の読みと相手の反応がずれてきたと感じる。【橙】「この場では正解がない」という疲弊感。【赤】関係の文脈そのものに疑問が来る——「なぜここにいるか」が見えなくなったとき、距離を置く。",
+    distance:"【黄】適切だった距離が侵食されてきたと感じる。【橙】相手の感情に引き込まれそうになる不快感。【赤】距離を取ることを「冷たい」と言われる——そう言われるほど、さらに距離を置く。",
+  }[r1.typeKey]||"【黄】消耗しているサインが出始める。【橙】疲弊感が続く。【赤】静かな遮断——距離を取ることが必要になる。";
+
+  const sec2_tokui={
+    struct:"設計の自由がある場面。試して記録して改善するサイクルが回せるとき。一人か信頼できる少人数で動けるとき。",
+    warmth:"関係の温度が保たれている環境。「どう言うか」を大切にできる場面。信頼している相手と一緒に動けるとき。",
+    context:"状況を読んでから判断できる余裕がある場面。柔軟に動ける環境。前例がなくても対応できる状況。",
+    distance:"適切な距離を保ちながら動ける環境。観察してから判断できる場面。一人で考える時間がある状況。",
+  }[r1.typeKey]||"自分のペースで動ける場面。";
+
+  const sec2_nigate={
+    struct:"根拠のないルール。感情で動く集団。理由のない「こうして」。",
+    warmth:"言葉が武器として使われる場面。正しさで人を制圧しようとする空気。温度を無視した効率優先の集団。",
+    context:"文脈を無視した一律のルール。「なぜ」を聞けない空気。状況に関わらず同じ正解を求められる場面。",
+    distance:"感情の密度が高い場。距離を詰めることを求められる空気。境界線が尊重されない集団。",
+  }[r1.typeKey]||"自分のペースを乱されるとき。";
+
+  const sec2_hanpat_title={
+    struct:"「やめる」と「捨てる」を分けられる",
+    warmth:"「どう言うか」から考える",
+    context:"「状況を読んでから」動く",
+    distance:"「観察してから」決める",
+  }[r1.typeKey]||"自分の軸で判断する";
+
+  const sec2_hanpat_text={
+    struct:"試してみて「言うほどでもない」と判断したら即やめる。でも記録だけ残す。感情的な執着がないからできることだ。新しい手法は、既存の設計と照らし合わせて判断する。「面白そう」だけでは動かない。",
+    warmth:"言葉の選び方から入る。何を言うかより、どう言うかが先に来る。関係を壊さずに伝えられるかどうかが、判断の一つの軸になっている。温度を保ったまま動けるかどうかで、進めるかを決める。",
+    context:"まず状況を把握してから動く。同じ問いでも文脈によって正解が変わることを知っている。「場合による」は優柔不断ではなく、精度の問題だ。前例がなくても、状況から判断できる。",
+    distance:"引き込まれずに全体を見てから動く。距離があるから見えるものがある。判断が遅いように見えるが、外から見えている情報量が多い。動き出したら、方向がぶれにくい。",
+  }[r1.typeKey]||"自分の軸で判断する。感情と切り離した判断ができる。";
+
+  const sec2_tsumaru={
+    struct:"「わかっているのにできない」ループ。自己認識が高いぶん詰まりの構造も見えてしまう。「なぜできないかはわかった、でも動けない」という二重苦になりやすい。",
+    warmth:"「傷つけたくない」と「言いたいことがある」が衝突するとき。どちらを優先するかで止まる。丁寧にしようとするほど、動けなくなる場面がある。",
+    context:"「まだ状況が読めていない」と感じると動き出せない。情報を集めすぎて判断が遅れる。柔軟さが、逆に「決めない」方向に働くことがある。",
+    distance:"距離を詰めることが必要な場面で止まる。「入っていくべきか」の判断に時間がかかる。観察が長くなりすぎて、タイミングを逃すことがある。",
+  }[r1.typeKey]||"自分のパターンが見えているのに動けないとき。";
+
+  // 統合
+  const integrations={
+    "struct_genjitsu":"設計してから動き、情報として処理し、構造への感度を持つ——この3つが重なると「設計する人間」という像が浮かび上がる。思考の順番にうるさいのは、自分がその順番で生きているからだ。",
+    "struct_jiseki":"構造への感度と自責の傾向が重なると、「正しくあろうとする圧力」が内側から来る。丁寧に動く。ただ完璧でなくていい場所を意識的に作ることが必要だ。",
+    "struct_yokubou":"構造への感度と、欲望への正直さが重なる。思考の順番を重視しながら、欲しいものには手を伸ばす。エネルギーの方向が明快だ。ただ「根拠なく欲しい」という衝動に、論理が追いつかない瞬間がある。",
+    "struct_sakiokuri":"思考の順番にうるさいのに、言えなかったことが溜まっていく。設計が得意なはずなのに、感情の設計だけが後回しになっている。矛盾ではない——ただそこだけが難しい場所だ。",
+    "struct_kiri":"構造は見えている。だが自分の欲望は霧の中にある。他人の設計は精密に読めるのに、自分が何を求めているかが言語化できない。そこだけ設計の道具が届かない。",
+    "struct_process":"思考の順番を重視しながら、感情の処理がちょうど変化の途中にいる。設計の精度と感情の揺れが同時に動いている時期だ。",
+    "warmth_genjitsu":"関係の温度を大切にしながら、感情を情報として処理できる——これは稀なバランスだ。",
+    "warmth_jiseki":"言葉の温度を大切にしながら、後悔は自分に向かう。「もっとうまく言えた」という後悔が溜まりやすい。言葉への感受性が高いぶん、自分の言葉にも厳しくなる。",
+    "warmth_yokubou":"温度を大切にし、欲しいものには正直だ。感情が外に出やすく、エネルギーがある。ただ「どう言うか」を重視するあまり、言いたいことを包みすぎることがある。",
+    "warmth_sakiokuri":"言葉の温度を大切にしながら、言えなかったことが溜まる。傷つけたくないから飲み込む。その積み重ねが、いつか「なぜ言ってくれなかった」という問いになることがある。",
+    "warmth_kiri":"他者への温度は感じるのに、自分が何を求めているかがわからない。与えることは得意で、受け取ることが苦手な人の気配がする。",
+    "warmth_process":"関係の温度を大切にしながら、感情の処理が変化の途中にいる。今まさに、自分の感情との付き合い方が変わろうとしている。",
+    "context_genjitsu":"状況を読んでから動く。それが「優柔不断」に見えることがあるが、実際は精度の問題だ。",
+    "context_jiseki":"状況を読んで動くが、後悔は自分に向かう。柔軟さと自責が重なると、「あの状況ではしょうがなかった、でも自分がもっとうまくやれれば」という循環に入りやすい。",
+    "context_yokubou":"状況を読んで動き、欲しいものには手を伸ばす。判断の精度が高く、エネルギーが外に向かう。ただ「状況が許せば動く」という形が続くと、後から整合性を取りにくくなることがある。",
+    "context_sakiokuri":"状況を読む力があるのに、言いたいことを飲み込む。「この場では言わない方がいい」という判断が先に来て、結果として後悔が溜まる。",
+    "context_kiri":"文脈を読んでから動く。だが自分の欲望が霧の中にある。他人の状況は精密に読めるのに、自分の状況だけが見えにくい。",
+    "context_process":"状況を読む力と、感情の変化が同時に動いている。適応する力が高いぶん、自分自身の変化に気づくのが遅れることがある。",
+    "distance_genjitsu":"観察してから動く。距離が判断の精度を上げている。",
+    "distance_jiseki":"適切な距離を保ちながら、後悔は自分に向かう。外から静かに観察しながら、内側では削れていく。",
+    "distance_yokubou":"距離を保ちながら、欲しいものには手を伸ばす。冷静な外見と衝動的な行動が並立する。周りからは読みにくい動き方に見えることがある。",
+    "distance_sakiokuri":"観察しながら、言えなかった言葉が溜まる。距離があるから言いにくいのか、言えないから距離を取るのか——どちらが先かはわからない。",
+    "distance_kiri":"距離を保ちながら、自分が何を求めているかもわからない。観察の方向が外に向きすぎて、内側が見えにくくなっている。",
+    "distance_process":"観察から動く。感情の処理が変化の途中にいる。距離の取り方自体が、今変わろうとしているのかもしれない。",
+  }[`${r1.typeKey}_${r2.typeKey}`]||`${r1.name}と${r2.name}が重なる人間——自分の軸を持ちながら、それに誠実に動く。`;
+
+  const core={
+    "struct_sekkei":"設計したものは失わない。設計の外側でも動く手を探す。強さの構造として一貫している。ただ、機能し終わったあと、誰もいない場所での自分を問うこと。",
+    "struct_genjitsu":"設計したものは失わない。設計していないものは、変化のたびに崩れる。",
+    "struct_tai":"設計する強さと、ただいることを選べる静けさ。両方を持っている。",
+    "struct_imi":"設計する力と、意味を探し続ける力。言語化という共通の道具で世界を読む。",
+    "struct_sonzai":"設計する強さと、そばにいることを選べる柔らかさ。どちらも自分で選んだ動き方だ。",
+    "struct_karada":"設計の精度と、体が先に反応する正直さ。設計の外側では、論理の前に体が知っている。",
+    "context_sekkei":"状況を読んで動き、設計の外側でも手を探す。対応力が高い。ただ「対応できない場面」が来たとき、どこに立つかを持っておくこと。",
+    "context_imi":"文脈を読み、意味を探し続ける。「なぜこうなったか」を問う力が、喪失の場面でも働く。",
+    "context_tai":"状況を読む柔軟さと、ただいることを選べる静けさ。動くことも動かないことも、どちらも選べる。",
+    "context_sonzai":"文脈を読みながら、そばにいることを選ぶ。存在することを行動として選べる人。",
+    "context_karada":"状況を読んで動く。設計の外側では体が先に動く。頭と体が違う言語で動く場面がある。",
+    "warmth_sekkei":"関係の温度を大切にしながら、設計の外側でも動く手を探す。誰かのために機能する。ただ機能することが自分の感情の代わりになっていないか確認すること。",
+    "warmth_imi":"温度と意味、両方を求める。人との関係にも、起きた出来事にも、意味を見つけようとする。",
+    "warmth_tai":"温度を大切にしながら、ただそこにいることを選べる。存在すること自体が、誰かへの贈り物になる人。",
+    "warmth_sonzai":"温度と存在——この二つが重なる人は、そこにいるだけで場が変わる。",
+    "warmth_karada":"温度への感受性と、体が先に反応する正直さ。感情の信号が豊かにある。それを受け取りすぎないこと。",
+    "distance_sekkei":"距離を保ちながら、設計の外側でも手を探す。冷静に動けるが、自分の感情が置いてきぼりになっていないか確認すること。",
+    "distance_imi":"観察しながら、意味を探し続ける。距離があるから見えることと、距離があるから見えないことの両方がある。",
+    "distance_tai":"距離を保ちながら、ただいることを選べる。この組み合わせは、静かな強さを持っている。",
+    "distance_sonzai":"観察しながら、そばにいることを選ぶ。気配を消しながら、存在できる人。",
+    "distance_karada":"距離を保つ知性と、体が先に動く正直さ。設計の外側では、距離がなくなる瞬間がある。",
+  }[`${r1.typeKey}_${r4.typeKey}`]||"自分の軸を持ち、それに誠実に動く。ブレる場面もあるが、どこに戻ればいいかはわかっている。";
+
+  // ときめきバー
+  const tokiAxes=['bi','chi','hito','guzen','monogatari','waza'];
+  const tokiColors=['#8b4513','#2d6a8b','#5a7a2d','#7a2d6a','#2d5a7a','#7a5a2d'];
+  const tokiLabels=D3.axLabels;
+  const tokiBars=tokiAxes.map((k,i)=>`
+    <div>
+      <div class="meter-head"><span class="meter-label" style="color:${tokiColors[i]}">${tokiLabels[k]}</span></div>
+      <div class="meter-track"><div class="meter-fill" data-w="${r3.scores[k]||0}" style="width:0%;background:${tokiColors[i]}"></div></div>
+    </div>
+  `).join('');
+
+  // 外側バー
+  const sotoBars=['sekkei','imi','tai','sonzai','karada'].map((k,i)=>{
+    const labels={sekkei:"設計への回帰",imi:"意味の探索",tai:"ただ在ること",sonzai:"存在への同伴",karada:"身体的な受け取り"};
+    const colors2=['#8b4513','#2d6a8b','#5a7a2d','#7a2d6a','#6b5a44'];
+    return `<div>
+      <div class="meter-head"><span class="meter-label" style="color:${colors2[i]}">${labels[k]}</span></div>
+      <div class="meter-track"><div class="meter-fill" data-w="${r4.scores[k]||0}" style="width:0%;background:${colors2[i]}"></div></div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="c-hero">
+      <div class="c-eye">PERSONAL DIAGNOSIS REPORT</div>
+      <div class="c-title">あなたの詳細診断票</div>
+      <div class="c-sub">4つの診断を統合した、あなただけのカルテ。</div>
+    </div>
+    <div class="basis-bar">
+      <div class="basis-text">${r1.name}／${r2.name}／${r3.name}／${r4.name}</div>
+    </div>
+    <div class="wrap">
+
+      <div class="chapter"><div class="ch-num">SECTION 01</div><div class="ch-title">対人関係——誰と合い、何で消耗するか</div></div>
+      <div class="two-col">
+        <div class="col-c"><div class="col-label">相性がいい人</div><div class="col-text">${taijin_good}</div></div>
+        <div class="col-c"><div class="col-label">消耗する相手</div><div class="col-text">${taijin_bad}</div></div>
+      </div>
+      <div class="warn">
+        <div class="warn-label">消耗サイン・3段階</div>
+        <div class="warn-text">${sec1_shomo_sign}</div>
+      </div>
+
+      <div class="chapter"><div class="ch-num">SECTION 02</div><div class="ch-title">仕事と判断——どう動き、どう詰まるか</div></div>
+      <div class="two-col">
+        <div class="col-c"><div class="col-label">得意な状況</div><div class="col-text">${sec2_tokui}</div></div>
+        <div class="col-c"><div class="col-label">苦手な状況</div><div class="col-text">${sec2_nigate}</div></div>
+      </div>
+      <div class="sec">
+        <div class="sec-label">判断の核心</div>
+        <div class="sec-title">${sec2_hanpat_title}</div>
+        <div class="sec-text"><p>${sec2_hanpat_text}</p></div>
+      </div>
+      <div class="warn">
+        <div class="warn-label">詰まるパターン</div>
+        <div class="warn-text">${sec2_tsumaru}</div>
+      </div>
+
+      <div class="chapter"><div class="ch-num">SECTION 03</div><div class="ch-title">感情の動き方——何で疲れ、何で回復するか</div></div>
+      <div class="sec">
+        <div class="sec-label">感情処理のパターン</div>
+        <div class="sec-text"><p>${kanjo}</p></div>
+      </div>
+      <div class="two-col">
+        <div class="col-c"><div class="col-label">消耗する状況</div><div class="col-text">${sec3_shomo}</div></div>
+        <div class="col-c"><div class="col-label">回復する状況</div><div class="col-text">${sec3_kaifuku}</div></div>
+      </div>
+      <div class="warn">
+        <div class="warn-label">気づきにくい疲弊</div>
+        <div class="warn-text">${sec3_hihai}</div>
+      </div>
+
+      <div class="chapter"><div class="ch-num">SECTION 04</div><div class="ch-title">ときめきのエネルギー源</div></div>
+      <div class="sec">
+        <div class="sec-label">ときめきの正体</div>
+        <div class="sec-title">${r3.name}</div>
+        <div class="sec-text"><p>${toki}</p></div>
+      </div>
+      <div class="meter-grid">${tokiBars}</div>
+
+      <div class="chapter"><div class="ch-num">SECTION 05</div><div class="ch-title">設計の外側——意思が及ばない場面で</div></div>
+      <div class="sec">
+        <div class="sec-label">動き方のパターン</div>
+        <div class="sec-title">${r4.name}</div>
+        <div class="sec-text"><p>${sotogawa.body}</p></div>
+      </div>
+      <div class="meter-grid">${sotoBars}</div>
+      <div class="sec">
+        <div class="sec-label">回復の動線</div>
+        <div class="sec-text"><p>${sotogawa.kaifuku}</p></div>
+      </div>
+      <div class="kurotxt">
+        <div class="k-label">最後の問い</div>
+        <div class="k-title">${r4.ktitle}</div>
+        <div class="k-text"><p>${r4.ktext}</p></div>
+      </div>
+
+      <div class="chapter"><div class="ch-num">SYNTHESIS</div><div class="ch-title">統合——あなたという人間の構造</div></div>
+      <div class="final">
+        <div class="final-label">INTEGRATED DIAGNOSIS</div>
+        <div class="final-title">${core.includes('。')?core.split('。')[0]+'。':core}</div>
+        <div class="final-text">
+          <p>${integrations}</p>
+          <p>${r4.name}——設計の外側での動き方がわかると、強さの全体像が見えてくる。強さの記録と、強さの外縁。両方が揃ったとき、これが完全なカルテになる。</p>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">診断根拠：${r1.name} × ${r2.name} × ${r3.name} × ${r4.name}</div>
+      </div>
+
+      <button class="restart-btn" id="carte-restart">最初からやり直す</button>
+    </div>
+  `;
+}
+
+function restart(){
+  phase=0;cur=0;
+  allAns.forEach((a,i)=>{allAns[i]=new Array([D1,D2,D3,D4][i].questions.length).fill(null);});
+  results.fill(null);
+  document.getElementById('carte-area').style.display='none';
+  document.getElementById('carte-area').innerHTML='';
+  document.getElementById('app-hero').style.display='block';
+  document.getElementById('step-nav').style.display='flex';
+  renderQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('bnx').addEventListener('click',()=>{
+  const d=currentD();const ans=currentAns();
+  if(ans[cur]===null)return;
+  if(cur<d.questions.length-1){cur++;renderQuiz();return;}
+  results[phase]=d.calc(ans);
+  if(phase<3){showBetween();}
+  else{generateCarte();}
+});
+document.getElementById('bbk').addEventListener('click',()=>{if(cur>0){cur--;renderQuiz();}});
+
+renderQuiz();
+})();
+</script>
+</body>
+</html>
